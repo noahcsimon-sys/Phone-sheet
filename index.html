@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Call Sheet — Fanatics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #09203f;
+      --navy-dark: #060f1e;
+      --navy-mid: #122a52;
+      --red: #e53d2e;
+      --red-dark: #c0311f;
+      --white: #ffffff;
+      --off-white: #f5f4f2;
+      --muted: #8a9ab5;
+      --border: rgba(255,255,255,0.08);
+      --card-bg: rgba(255,255,255,0.04);
+      --done-opacity: 0.38;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--navy-dark);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 env(safe-area-inset-bottom, 16px);
+    }
+
+    /* Header */
+    header {
+      background: var(--navy);
+      border-bottom: 3px solid var(--red);
+      padding: 20px 20px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--red);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+
+    .logo-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1;
+    }
+
+    .logo-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .badge {
+      background: var(--red);
+      color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 99px;
+      min-width: 28px;
+      text-align: center;
+      transition: transform 0.15s;
+    }
+
+    .badge.zero {
+      background: rgba(255,255,255,0.1);
+      color: var(--muted);
+    }
+
+    /* Add form */
+    .add-form {
+      background: var(--navy);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .add-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .field-group label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 13px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(255,255,255,0.2);
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--red);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .btn-add {
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-add:hover { background: var(--red-dark); }
+    .btn-add:active { transform: scale(0.94); }
+
+    .btn-add svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    /* Second row for notes */
+    .notes-row {
+      margin-top: 8px;
+    }
+
+    .notes-row input {
+      font-size: 14px;
+    }
+
+    /* List */
+    .list-wrap {
+      flex: 1;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 48px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 48px;
+      height: 48px;
+      opacity: 0.3;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      opacity: 0.6;
+    }
+
+    /* Call item */
+    .call-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 13px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: opacity 0.2s, border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      animation: slideIn 0.18s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .call-item.done {
+      opacity: var(--done-opacity);
+    }
+
+    .call-item.done .call-name {
+      text-decoration: line-through;
+      text-decoration-color: var(--muted);
+    }
+
+    /* Checkbox */
+    .check-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .check-btn:active { transform: scale(0.88); }
+
+    .check-btn.checked {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .check-btn svg {
+      width: 12px;
+      height: 12px;
+      stroke: white;
+      stroke-width: 2.5;
+      fill: none;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .check-btn.checked svg { opacity: 1; }
+
+    .call-body { flex: 1; min-width: 0; }
+
+    .call-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .call-notes {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.18);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .delete-btn:hover, .delete-btn:focus {
+      color: var(--red);
+      background: rgba(229,61,46,0.1);
+    }
+
+    .delete-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 12px 20px 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.15);
+      letter-spacing: 0.04em;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 400px) {
+      .logo-title { font-size: 19px; }
+      .add-row { flex-wrap: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <header>
+      <div class="header-top">
+        <div class="logo">
+          <div class="logo-mark">
+            <svg viewBox="0 0 20 20"><path d="M3 4h14M3 10h10M3 16h7" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+          </div>
+          <div>
+            <div class="logo-text">Fanatics</div>
+            <div class="logo-title">Call Sheet</div>
+          </div>
+        </div>
+        <div class="badge zero" id="badge">0</div>
+      </div>
+    </header>
+
+    <div class="add-form">
+      <div class="add-row">
+        <div class="field-group">
+          <label for="inp-name">Name</label>
+          <input type="text" id="inp-name" placeholder="Who to call" autocomplete="off" autocorrect="off" />
+        </div>
+        <button class="btn-add" id="btn-add" aria-label="Add to call list">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <div class="notes-row">
+        <input type="text" id="inp-notes" placeholder="What to discuss (optional)" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="list-wrap" id="list-wrap">
+      <div class="empty-state" id="empty-state">
+        <svg class="empty-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M30 4H10a2 2 0 00-2 2v36a2 2 0 002 2h28a2 2 0 002-2V16L30 4z"/>
+          <path d="M30 4v12h12"/>
+          <line x1="16" y1="22" x2="32" y2="22"/>
+          <line x1="16" y1="29" x2="26" y2="29"/>
+        </svg>
+        <p>No calls added yet.<br/>Add a name above to get started.</p>
+      </div>
+    </div>
+
+    <footer>Fanatics Internal · Call Sheet</footer>
+  </div>
+
+  <script>
+    let calls = [];
+
+    const nameInput = document.getElementById('inp-name');
+    const notesInput = document.getElementById('inp-notes');
+    const listWrap = document.getElementById('list-wrap');
+    const emptyState = document.getElementById('empty-state');
+    const badge = document.getElementById('badge');
+    const btnAdd = document.getElementById('btn-add');
+
+    function save() {
+      try { localStorage.setItem('fc-calls', JSON.stringify(calls)); } catch(e) {}
+    }
+
+    function load() {
+      try {
+        const d = localStorage.getItem('fc-calls');
+        if (d) calls = JSON.parse(d);
+      } catch(e) {}
+    }
+
+    function updateBadge() {
+      const pending = calls.filter(c => !c.done).length;
+      badge.textContent = pending;
+      badge.className = 'badge' + (pending === 0 ? ' zero' : '');
+    }
+
+    function render() {
+      const items = listWrap.querySelectorAll('.call-item');
+      items.forEach(el => el.remove());
+
+      emptyState.style.display = calls.length === 0 ? 'flex' : 'none';
+
+      calls.forEach((c, i) => {
+        const div = document.createElement('div');
+        div.className = 'call-item' + (c.done ? ' done' : '');
+        div.innerHTML = `
+          <button class="check-btn${c.done ? ' checked' : ''}" data-i="${i}" aria-label="Mark as called">
+            <svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg>
+          </button>
+          <div class="call-body">
+            <div class="call-name">${esc(c.name)}</div>
+            ${c.notes ? `<div class="call-notes">${esc(c.notes)}</div>` : ''}
+          </div>
+          <button class="delete-btn" data-i="${i}" aria-label="Remove">
+            <svg viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+          </button>
+        `;
+        listWrap.appendChild(div);
+      });
+
+      updateBadge();
+    }
+
+    function esc(s) {
+      return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function addCall() {
+      const name = nameInput.value.trim();
+      if (!name) { nameInput.focus(); return; }
+      calls.unshift({ name, notes: notesInput.value.trim(), done: false });
+      nameInput.value = '';
+      notesInput.value = '';
+      nameInput.focus();
+      save();
+      render();
+    }
+
+    btnAdd.addEventListener('click', addCall);
+
+    nameInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); notesInput.focus(); }
+    });
+
+    notesInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addCall(); }
+    });
+
+    listWrap.addEventListener('click', e => {
+      const checkBtn = e.target.closest('.check-btn');
+      const deleteBtn = e.target.closest('.delete-btn');
+
+      if (checkBtn) {
+        const i = +checkBtn.dataset.i;
+        calls[i].done = !calls[i].done;
+        save();
+        render();
+      }
+
+      if (deleteBtn) {
+        const i = +deleteBtn.dataset.i;
+        calls.splice(i, 1);
+        save();
+        render();
+      }
+    });
+
+    load();
+    render();
+  </script>
+</body>
+</html>
